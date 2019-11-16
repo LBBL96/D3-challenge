@@ -44,7 +44,8 @@ var chosenYAxis = "obesity";
 function yScale(censusData, chosenYAxis){
     var yLinearScale = d3.scaleLinear()
         .domain([0, d3.max(censusData, d => d[chosenYAxis]) * 1.2,
-            d3.min(censusData, d => d[chosenYAxis]) * 0.8])
+            d3.min(censusData, d => d[chosenYAxis]) * 4
+        ])
         .range([height, 0]);
 
     return yLinearScale;
@@ -96,21 +97,49 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis){
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
     let label  = "";
+    let ylabel = "";
     if (chosenXAxis === "poverty") {
-        label = "Percent in Poverty:";
+        label = "Percent in Poverty:"
+        if(chosenYAxis === "obesity"){
+            ylabel = "Percent Obese:"
+        } 
+        else if (chosenYAxis === "smokes"){
+            ylabel = "Percent Who Smoke:"
+        }
+        else {
+            ylabel = "Percent Lacking Healthcare:"
+        }
     } 
     else if (chosenXAxis === "age") {
         label = "Age:";
+        if(chosenYAxis === "obesity"){
+            ylabel = "Percent Obese:"
+        } 
+        else if (chosenYAxis === "smokes"){
+            ylabel = "Percent Who Smoke:"
+        }
+        else {
+            ylabel = "Percent Lacking Healthcare:"
+        }
     } 
     else {
-        label = "Household Income:";
+        label = "Household Income:"
+        if(chosenYAxis === "obesity"){
+            ylabel = "Percent Obese:"
+        } 
+        else if (chosenYAxis === "smokes"){
+            ylabel = "Percent Who Smoke:"
+        }
+        else {
+            ylabel = "Percent Lacking Healthcare:"
+        }
     }
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
         .offset([180, 60])
         .html(function(d) {
-            return (`${d.state}<hr>${label} ${d[chosenXAxis]}`);
+            return (`${d.state}<hr>${label} ${d[chosenXAxis]}<hr>${ylabel} ${d[chosenYAxis]}`);
         });
 
     circlesGroup.call(toolTip);
@@ -143,11 +172,8 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     // xLinearScale function above csv import
     var xLinearScale = xScale(censusData, chosenXAxis);
 
-    // Create y scale function
-    // var yLinearScale = yScale(censusData, chosenYAxis);
-    const yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(censusData, d => d.obesity)])
-    .range([height, 0]);
+    // Calling yScale function
+    var yLinearScale = yScale(censusData, chosenYAxis);
 
     // Create initial axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
