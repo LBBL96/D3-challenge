@@ -189,7 +189,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     var yAxis = chartGroup.append("g")
         .classed("y-axis", true)
         // .attr(height, 0)
-        .call(leftAxis); // will need to call bottomAxis for HW
+        .call(leftAxis); 
     
 
     // append initial circles
@@ -231,42 +231,65 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     // Create labels group for 3 y-axis labels
     
     var yLabelsGroup = chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("x", 0 - (height / 2));
+        .attr("transform", "rotate(-90)");
 
     var obesityLabel = yLabelsGroup.append("text")
+        .attr("x", 0 - (height / 2))
         .attr("y", 0 - margin.left)
         .attr("yValue", "obesity")
         .classed("active", true)
         .text("Obesity (%)")
-
+       
     var smokesLabel = yLabelsGroup.append("text")
-        .attr("y", (0 - margin.left))
+        .attr("x", 0 - (height / 2))
+        .attr("y", 20 - margin.left)
         .attr("yValue", "smokes")
         .classed("inactive", true)
-        .text("Smokes (%)")
+        .text("Smokes (%)");
 
     
     var healthcareLabel = yLabelsGroup.append("text")
-        .attr("y", (0 - margin.left -20))
+        .attr("x", 0 - (height / 2))
+        .attr("y", 40 - margin.left)
         .attr("yValue", "healthcare")
         .classed("inactive", true)
-        .text("Lacks Healthcare (%)")
+        .text("Lacks Healthcare (%)");
+    
 
-    // append y axis
-    chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left)
-        .attr("x", 0 - (height / 2))
-        .attr("dy", "1em")
-        .classed("axis-text", true)
-        .text("Obesity (%)");
+    // // append y axis
+    // chartGroup.append("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("y", 0 - margin.left)
+    //     .attr("x", 0 - (height / 2))
+    //     .attr("dy", "1em")
+    //     .classed("axis-text", true)
+    //     .text("Obesity (%)");
 
+
+    //   // append y axis
+    // chartGroup.append("text")
+    //   .attr("transform", "rotate(-90)")
+    //   .attr("y", 20 - margin.left)
+    //   .attr("x", 0 - (height / 2))
+    //   .attr("dy", "1em")
+    //   .classed("axis-text", true)
+    //   .text("Smokes (%)");
+
+    //     // append y axis
+    // chartGroup.append("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("y", 40 - margin.left)
+    //     .attr("x", 0 - (height / 2))
+    //     .attr("dy", "1em")
+    //     .classed("axis-text", true)
+    //     .text("Lacks Healthcare (%)");
+
+        
     // updateToolTip function above csv import
     circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
     // x axis labels event listener -- also will need a Y group for HW
-    labelsGroup.selectAll("text")
+    xLabelsGroup.selectAll("text")
         .on("click", function() {
         // get value of selection
         var value = d3.select(this).attr("value");
@@ -275,17 +298,17 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             // replaces chosenXAxis with value
             chosenXAxis = value;
 
-            // console.log(chosenXAxis)
+            console.log(chosenXAxis)
 
             // functions here found above csv import
             // updates x scale for new data
             xLinearScale = xScale(censusData, chosenXAxis);
 
             // updates x axis with transition
-            xAxis = renderAxes(xLinearScale, xAxis);
+            xAxis = renderXAxes(xLinearScale, xAxis);
 
             // updates circles with new x values
-            circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+            circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
 
             // updates tooltips with new info
             circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
