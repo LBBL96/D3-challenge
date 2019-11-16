@@ -49,8 +49,8 @@ function yScale(censusData, chosenYAxis){
     return yLinearScale;
 }
 
-// function used for updating xAxis const upon click on axis label
-function renderXAxes(newXScale, xAxis) { // can split out renderXAxes, renderYAxes for homework
+// function used for updating xAxis var upon click on axis label
+function renderXAxes(newXScale, xAxis) { 
   var bottomAxis = d3.axisBottom(newXScale);
 
   xAxis.transition()
@@ -60,7 +60,7 @@ function renderXAxes(newXScale, xAxis) { // can split out renderXAxes, renderYAx
   return xAxis;
 }
 
-function renderYAxes(newYScale, yAxis) { // can split out renderXAxes, renderYAxes for homework
+function renderYAxes(newYScale, yAxis) { 
     var leftAxis = d3.axisLeft(newYScale);
   
     yAxis.transition()
@@ -72,13 +72,23 @@ function renderYAxes(newYScale, yAxis) { // can split out renderXAxes, renderYAx
 
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, newXScale, chosenXaxis) {
+function renderXCircles(circlesGroup, newXScale, chosenXaxis) {
 
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
+    ;
 
   return circlesGroup;
+}
+
+function renderYCircles(circlesGroup, newYScale, chosenYAxis){
+
+    circlesGroup.transition()
+    .duration(1000)
+    .attr("cy", d => newYScale(d[chosenYAxis]));
+
+  return circlesGroup
 }
 
 // function used for updating circles group with new tooltip
@@ -132,9 +142,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     var xLinearScale = xScale(censusData, chosenXAxis);
 
     // Create y scale function
-    var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(censusData, d => d.chosenYAxis)])
-        .range([height, 0]);
+    var yLinearScale = yScale(censusData, chosenYAxis);
 
     // Create initial axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -160,7 +168,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
-        .attr("r", 20)
+        .attr("r", 10)
         .attr("fill", "blue")
         .attr("opacity", ".5");
 
@@ -184,34 +192,32 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     var incomeLabel = xLabelsGroup.append("text")
         .attr("x", 0)
-        .attr("y", 40)
+        .attr("y", 60)
         .attr("value", "income") // value to grab for event listener
         .classed("inactive", true)
         .text("Household Income (Median)");
 
     // Create labels group for 3 y-axis labels
     
-    var yLabelsGroup = chartGroup.append("g")
-        .attr()
+    var yLabelsGroup = chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", 0 - (height / 2));
 
     var obesityLabel = yLabelsGroup.append("text")
-        .attr("x", )
-        .attr("y", )
+        .attr("y", 0 - margin.left)
         .attr("yValue", "obesity")
         .classed("active", true)
         .text("Obesity (%)")
 
     var smokesLabel = yLabelsGroup.append("text")
-        .attr("x", )
-        .attr("y", )
+        .attr("y", (0 - margin.left - 20))
         .attr("yValue", "smokes")
         .classed("inactive", true)
         .text("Smokes (%)")
 
     
     var healthcareLabel = yLabelsGroup.append("text")
-        .attr("x", )
-        .attr("y", )
+        .attr("y", (0 - margin.left -20))
         .attr("yValue", "healthcare")
         .classed("inactive", true)
         .text("Lacks Healthcare (%)")
@@ -293,11 +299,11 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             // replaces chosenYAxis with yValue
             chosenYAxis = yValue;
 
-            // console.log(chosenYAxis)
+            console.log(chosenYAxis)
 
             // functions here found above csv import
             // updates y scale for new data
-            yLinearScale = xScale(censusData, chosenYAxis);
+            yLinearScale = yScale(censusData, chosenYAxis);
 
             // updates y axis with transition
             yAxis = renderAxes(yLinearScale, yAxis);
