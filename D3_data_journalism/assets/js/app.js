@@ -25,7 +25,6 @@ var chartGroup = svg.append("g")
 
 // Initial Params for when page is initially loaded
 var chosenXAxis = "poverty";
-var chosenYAxis = "obesity";
 
 // function used for updating x-scale const upon click on axis label
 function xScale(censusData, chosenXAxis) { // parameters: (array of data objects, key)
@@ -39,6 +38,8 @@ function xScale(censusData, chosenXAxis) { // parameters: (array of data objects
   return xLinearScale;
 
 } // an additional yScale function will be needed for HW
+
+var chosenYAxis = "obesity";
 
 function yScale(censusData, chosenYAxis){
     var yLinearScale = d3.scaleLinear()
@@ -60,6 +61,7 @@ function renderXAxes(newXScale, xAxis) {
   return xAxis;
 }
 
+// function used to update yAxis var upon click on axis label
 function renderYAxes(newYScale, yAxis) { 
     var leftAxis = d3.axisLeft(newYScale);
   
@@ -77,7 +79,7 @@ function renderXCircles(circlesGroup, newXScale, chosenXaxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
-    ;
+    
 
   return circlesGroup;
 }
@@ -95,7 +97,7 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis){
 function updateToolTip(chosenXAxis, circlesGroup) {
     let label  = "";
     if (chosenXAxis === "poverty") {
-        label = "In Poverty:";
+        label = "Percent in Poverty:";
     } 
     else if (chosenXAxis === "age") {
         label = "Age:";
@@ -106,7 +108,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
-        .offset([80, -60])
+        .offset([180, 60])
         .html(function(d) {
             return (`${d.state}<hr>${label} ${d[chosenXAxis]}`);
         });
@@ -142,7 +144,10 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     var xLinearScale = xScale(censusData, chosenXAxis);
 
     // Create y scale function
-    var yLinearScale = yScale(censusData, chosenYAxis);
+    // var yLinearScale = yScale(censusData, chosenYAxis);
+    const yLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(censusData, d => d.obesity)])
+    .range([height, 0]);
 
     // Create initial axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -157,7 +162,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     // append y axis
     var yAxis = chartGroup.append("g")
         .classed("y-axis", true)
-        // .attr("transform", )
+        // .attr(height, 0)
         .call(leftAxis); // will need to call bottomAxis for HW
     
 
@@ -168,7 +173,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
-        .attr("r", 10)
+        .attr("r", 13)
         .attr("fill", "blue")
         .attr("opacity", ".5");
 
@@ -210,7 +215,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .text("Obesity (%)")
 
     var smokesLabel = yLabelsGroup.append("text")
-        .attr("y", (0 - margin.left - 20))
+        .attr("y", (0 - margin.left))
         .attr("yValue", "smokes")
         .classed("inactive", true)
         .text("Smokes (%)")
