@@ -25,8 +25,9 @@ var chartGroup = svg.append("g")
 
 // Initial Params for when page is initially loaded
 var chosenXAxis = "poverty";
+var chosenYAxis = "obesity";
 
-// function used for updating x-scale const upon click on axis label
+// function used for updating x-scale var upon click on axis label
 function xScale(censusData, chosenXAxis) { 
   // create scales
   var xLinearScale = d3.scaleLinear()
@@ -37,14 +38,10 @@ function xScale(censusData, chosenXAxis) {
 
   return xLinearScale;
 
-} // an additional yScale function will be needed for HW
-
-var chosenYAxis = "obesity";
-
+} // Create Y Scale
 function yScale(censusData, chosenYAxis){
     var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(censusData, d => d[chosenYAxis]) * 1.2,
-            d3.min(censusData, d => d[chosenYAxis]) * 4
+        .domain([0, d3.max(censusData, d => d[chosenYAxis])
         ])
         .range([height, 0]);
 
@@ -319,6 +316,12 @@ function updateToolTip(chosenXAxis, circlesGroup) {
                     .classed("active", true)
                     .classed("inactive", false);
             }
+        }
+    })
+
+    yLabelsGroup.selectAll("text")
+        .on("click", function() {
+        // get value of selection
         var yValue = d3.select(this).attr("yValue");
         if (yValue !== chosenYAxis) {
 
@@ -335,7 +338,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             yAxis = renderYAxes(yLinearScale, yAxis);
 
             // updates circles with new y values
-            circlesGroup = renderCircles(circlesGroup, yLinearScale, chosenYAxis);
+            circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
 
             // updates tooltips with new info
             circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
@@ -376,5 +379,5 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             }
         }
     }
-    });
+    );
 })()
