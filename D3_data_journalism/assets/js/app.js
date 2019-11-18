@@ -322,7 +322,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     yLabelsGroup.selectAll("text")
         .on("click", function() {
         // get value of selection
-        var yValue = d3.select(this).attr("yValue");
+        var yValue = d3.select(this).attr("value");
         if (yValue !== chosenYAxis) {
 
             // replaces chosenYAxis with yValue
