@@ -27,7 +27,7 @@ var chartGroup = svg.append("g")
 var chosenXAxis = "poverty";
 
 // function used for updating x-scale const upon click on axis label
-function xScale(censusData, chosenXAxis) { // parameters: (array of data objects, key)
+function xScale(censusData, chosenXAxis) { 
   // create scales
   var xLinearScale = d3.scaleLinear()
     .domain([d3.min(censusData, d => d[chosenXAxis]) * 0.8,
@@ -230,63 +230,35 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     // Create labels group for 3 y-axis labels
     
-    var yLabelsGroup = chartGroup.append("text")
+    var yLabelsGroup = chartGroup.append("g")
         .attr("transform", "rotate(-90)");
 
     var obesityLabel = yLabelsGroup.append("text")
         .attr("x", 0 - (height / 2))
-        .attr("y", 0 - margin.left)
-        .attr("yValue", "obesity")
+        .attr("y", 20 - margin.left)
+        .attr("value", "obesity")
         .classed("active", true)
         .text("Obesity (%)")
        
     var smokesLabel = yLabelsGroup.append("text")
         .attr("x", 0 - (height / 2))
-        .attr("y", 20 - margin.left)
-        .attr("yValue", "smokes")
+        .attr("y", 40 - margin.left)
+        .attr("value", "smokes")
         .classed("inactive", true)
         .text("Smokes (%)");
 
     
     var healthcareLabel = yLabelsGroup.append("text")
         .attr("x", 0 - (height / 2))
-        .attr("y", 40 - margin.left)
-        .attr("yValue", "healthcare")
+        .attr("y", 60 - margin.left)
+        .attr("value", "healthcare")
         .classed("inactive", true)
         .text("Lacks Healthcare (%)");
-    
-
-    // // append y axis
-    // chartGroup.append("text")
-    //     .attr("transform", "rotate(-90)")
-    //     .attr("y", 0 - margin.left)
-    //     .attr("x", 0 - (height / 2))
-    //     .attr("dy", "1em")
-    //     .classed("axis-text", true)
-    //     .text("Obesity (%)");
 
 
-    //   // append y axis
-    // chartGroup.append("text")
-    //   .attr("transform", "rotate(-90)")
-    //   .attr("y", 20 - margin.left)
-    //   .attr("x", 0 - (height / 2))
-    //   .attr("dy", "1em")
-    //   .classed("axis-text", true)
-    //   .text("Smokes (%)");
-
-    //     // append y axis
-    // chartGroup.append("text")
-    //     .attr("transform", "rotate(-90)")
-    //     .attr("y", 40 - margin.left)
-    //     .attr("x", 0 - (height / 2))
-    //     .attr("dy", "1em")
-    //     .classed("axis-text", true)
-    //     .text("Lacks Healthcare (%)");
-
-        
     // updateToolTip function above csv import
     circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+    
 
     // x axis labels event listener -- also will need a Y group for HW
     xLabelsGroup.selectAll("text")
@@ -315,7 +287,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
             // changes classes to change bold text
             if (chosenXAxis === "poverty") {
-                povertyLabel
+                 povertyLabel
                     .classed("active", true) // bolds the active axis label
                     .classed("inactive", false);
                 ageLabel
@@ -360,7 +332,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             yLinearScale = yScale(censusData, chosenYAxis);
 
             // updates y axis with transition
-            yAxis = renderAxes(yLinearScale, yAxis);
+            yAxis = renderYAxes(yLinearScale, yAxis);
 
             // updates circles with new y values
             circlesGroup = renderCircles(circlesGroup, yLinearScale, chosenYAxis);
