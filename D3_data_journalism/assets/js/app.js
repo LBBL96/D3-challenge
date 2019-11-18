@@ -199,6 +199,16 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .attr("r", 13)
         .attr("fill", "blue")
         .attr("opacity", ".5");
+       
+    // append state abbr text to circles   
+    circlesGroup
+        .selectAll("text")
+        .data(censusData)
+        .enter()
+        .append("text")
+        .text(function(data, i){
+            data.abbr[i];
+        });
 
     // Create group for  3 x- axis labels
     var xLabelsGroup = chartGroup.append("g")
