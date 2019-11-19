@@ -103,7 +103,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         else if (chosenYAxis === "smokes"){
             ylabel = "Percent Who Smoke:"
         }
-        else {
+        else if (chosenYAxis === "healthcare"){
             ylabel = "Percent Lacking Healthcare:"
         }
     } 
@@ -115,19 +115,19 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         else if (chosenYAxis === "smokes"){
             ylabel = "Percent Who Smoke:"
         }
-        else {
+        else if (chosenYAxis === "healthcare"){
             ylabel = "Percent Lacking Healthcare:"
         }
     } 
-    else {
-        label = "Household Income:"
+    else if (chosenXAxis === "income"){
+        label = "Household Income:";
         if(chosenYAxis === "obesity"){
             ylabel = "Percent Obese:"
         } 
         else if (chosenYAxis === "smokes"){
             ylabel = "Percent Who Smoke:"
         }
-        else {
+        else if (chosenYAxis === "healthcare"){
             ylabel = "Percent Lacking Healthcare:"
         }
     }
@@ -187,7 +187,6 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .classed("y-axis", true)
         // .attr(height, 0)
         .call(leftAxis); 
-    
 
     // append initial circles
     let circlesGroup = chartGroup.selectAll("circle")
@@ -199,16 +198,15 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .attr("r", 13)
         .attr("fill", "blue")
         .attr("opacity", ".5");
-       
+   
     // append state abbr text to circles   
     circlesGroup
-        .selectAll("text")
-        .data(censusData)
-        .enter()
         .append("text")
-        .text(function(data, i){
-            data.abbr[i];
-        });
+        .attr("x", d => xLinearScale(d[chosenXAxis]))
+        .attr("y", d => yLinearScale(d[chosenYAxis]))
+        .attr("text-anchor", "middle")
+        .style("fill", "black")
+        .text(d => d.abbr);
 
     // Create group for  3 x- axis labels
     var xLabelsGroup = chartGroup.append("g")
@@ -265,6 +263,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     // updateToolTip function above csv import
     circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+    // circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
     
 
     // x axis labels event listener -- also will need a Y group for HW
@@ -351,7 +350,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
 
             // updates tooltips with new info
-            circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+            circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
         // Changes y-axes to bold
 
             if (chosenYAxis === "obesity") {
