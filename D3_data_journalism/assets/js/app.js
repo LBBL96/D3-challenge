@@ -71,24 +71,44 @@ function renderYAxes(newYScale, yAxis) {
   }
 
 // function used for updating circles group with a transition to
-// new circles
+// new circles' x values
 function renderXCircles(circlesGroup, newXScale, chosenXaxis) {
 
   circlesGroup.transition()
     .duration(1000)
-    .attr("cx", d => newXScale(d[chosenXAxis]));
-    
+    .attr("cx", d => newXScale(d[chosenXAxis]))
 
   return circlesGroup;
 }
 
+// function to update circles' y values
 function renderYCircles(circlesGroup, newYScale, chosenYAxis){
 
     circlesGroup.transition()
     .duration(1000)
-    .attr("cy", d => newYScale(d[chosenYAxis]));
+    .attr("cy", d => newYScale(d[chosenYAxis]))
 
-  return circlesGroup
+  return circlesGroup;
+}
+
+// function to update labels' x value
+function renderAbbrXLabels(abbrLabels, newXScale, chosenXAxis){
+
+  abbrLabels.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]))
+
+  return abbrLabels;
+}
+
+// function to update labels' y values
+function renderAbbrYLabels(abbrLabels, newYScale, chosenYAxis){
+
+  abbrLabels.transition()
+    .duration(1000)
+    .attr("y", d => newYScale(d[chosenYAxis]))
+
+  return abbrLabels;
 }
 
 // function used for updating circles group with new tooltip
@@ -135,6 +155,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     var toolTip = d3.tip()
         .attr("class", "tooltip")
         .offset([180, 60])
+        .style("background-color", "lightgray")
         .html(function(d) {
             return (`${d.state}<hr>${label} ${d[chosenXAxis]}<hr>${ylabel} ${d[chosenYAxis]}`);
         });
@@ -188,19 +209,25 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         // .attr(height, 0)
         .call(leftAxis); 
 
-    // append initial circles
-    let circlesGroup = chartGroup.selectAll("circle")
+    // Create a group to hold circles and their labels
+
+    let dotGroup = chartGroup.selectAll("g.dot")
         .data(censusData)
         .enter()
+        .append("g")
+
+    // append initial circles
+    let circlesGroup = dotGroup
         .append("circle")
+        .attr("class", "dot")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", 13)
         .attr("fill", "blue")
         .attr("opacity", ".5");
    
-    // append state abbr text to circles   
-    circlesGroup
+    // // append initial state abbr text to circles   
+    let abbrLabels = dotGroup
         .append("text")
         .attr("x", d => xLinearScale(d[chosenXAxis]))
         .attr("y", d => yLinearScale(d[chosenYAxis]))
@@ -263,10 +290,8 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     // updateToolTip function above csv import
     circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-    // circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
     
-
-    // x axis labels event listener -- also will need a Y group for HW
+    // x axis labels event listener
     xLabelsGroup.selectAll("text")
         .on("click", function() {
         // get value of selection
@@ -278,7 +303,6 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
             console.log(chosenXAxis)
 
-            // functions here found above csv import
             // updates x scale for new data
             xLinearScale = xScale(censusData, chosenXAxis);
 
@@ -287,6 +311,9 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
             // updates circles with new x values
             circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+            // update x values for labels
+            abbrLabels = renderAbbrXLabels(abbrLabels, xLinearScale, chosenXAxis)
 
             // updates tooltips with new info
             circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
@@ -338,8 +365,6 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             chosenYAxis = yValue;
 
             console.log(chosenYAxis)
-
-            // functions here found above csv import
             // updates y scale for new data
             yLinearScale = yScale(censusData, chosenYAxis);
 
@@ -349,10 +374,13 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             // updates circles with new y values
             circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
 
+            // update y values for labels
+            abbrLabels = renderAbbrYLabels(abbrLabels, yLinearScale, chosenYAxis)
+
             // updates tooltips with new info
             circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-        // Changes y-axes to bold
-
+        
+            // Changes y-axis to bold depending on chosen axis
             if (chosenYAxis === "obesity") {
                 obesityLabel
                     .classed("active", true) 
